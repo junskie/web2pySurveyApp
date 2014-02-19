@@ -1,0 +1,48 @@
+{{}}
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{=googlemap_key}}" type="text/javascript"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+    function load() {
+      if (GBrowserIsCompatible()) {
+        var map = new GMap2(document.getElementById("map"));
+        map.addControl(new GSmallMapControl());
+        map.addControl(new GMapTypeControl());
+        map.setCenter(new GLatLng({{=center_latitude}},
+           {{=center_longitude}}), {{=scale}});
+
+        var baseIcon = new GIcon();
+        baseIcon.shadow = "http://www.google.com/mapfiles/shadow50.png";
+        baseIcon.iconSize = new GSize(20, 34);
+        baseIcon.shadowSize = new GSize(37, 34);
+        baseIcon.iconAnchor = new GPoint(9, 34);
+        baseIcon.infoWindowAnchor = new GPoint(9, 2);
+        baseIcon.infoShadowAnchor = new GPoint(18, 14);
+        var blueIcon = new GIcon();
+        blueIcon.image = "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png";
+        blueIcon.shadow = "http://www.google.com/mapfiles/shadow50.png";
+        blueIcon.iconSize = new GSize(37, 34);
+        blueIcon.shadowSize = new GSize(37, 34);
+        blueIcon.iconAnchor = new GPoint(9, 34);
+        blueIcon.infoWindowAnchor = new GPoint(9, 2);
+        blueIcon.infoShadowAnchor = new GPoint(18, 14);
+
+        function createMarker(point, i, message) {
+           if(i==0) markerOptions = { icon:blueIcon };
+           else markerOptions= {}
+           var marker = new GMarker(point, markerOptions);
+           GEvent.addListener(marker, "click", function() {
+             marker.openInfoWindowHtml(message);
+           });
+           return marker;
+        }
+        {{for point in points:}}{{if point.latitude and point.longitude:}}
+          var point = new GLatLng({{=point.latitude}},{{=point.longitude}});
+          map.addOverlay(createMarker(point, 0, 
+            '{{=point.get('map_marker',maker(point))}}'));
+        {{pass}}{{pass}}
+     }
+    }
+    //]]>
+    </script>
+    <div id="map" style="width: 800px; height: 500px"></div>
+    <script>load();</script>
